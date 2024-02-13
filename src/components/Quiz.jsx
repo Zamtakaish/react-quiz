@@ -1,34 +1,19 @@
 import React, { useState, useCallback } from 'react';
 import QUESTIONS from '../questions.js';
 import quizCompleteImg from '../assets/quiz-complete.png';
-import QuestionTimer from "./QuestionTimer.jsx";
-import Answers from "./Answers.jsx";
 import Question from "./Question.jsx";
 
 function Quiz(props) {
 
-    const [answerState, setAnswerState] = useState('');
     const [userAnswers, setUserAnswers] = useState([]);
 
-    const activeQuestionIndex = answerState === '' ? userAnswers.length : userAnswers.length -1;
+    const activeQuestionIndex = userAnswers.length;
     const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
-    const handleSelectAnswer = useCallback (function handleSelectAnswer(selectedAnswer) {
-        setAnswerState('answered');
-        setUserAnswers((prevState) => [...prevState, selectedAnswer]);
-
-        setTimeout(() => {
-            if (selectedAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
-                setAnswerState('correct');
-            } else {
-                setAnswerState('wrong');
-            }
-
-            setTimeout(() => {
-                setAnswerState('');
-            }, 2000);
-        }, 1000);
-    }, [activeQuestionIndex]);
+    const handleSelectAnswer = useCallback (
+        function handleSelectAnswer(selectedAnswer) {
+            setUserAnswers((prevState) => [...prevState, selectedAnswer]);
+    }, []);
 
     const handleSkipAnswer = useCallback(() => {
         handleSelectAnswer(null)
@@ -47,10 +32,7 @@ function Quiz(props) {
         <div id='quiz'>
             {/*the key prop is used to trigger recreation of timer component every time question changes.*/}
             <Question key={activeQuestionIndex}
-                      questionText={QUESTIONS[activeQuestionIndex].text}
-                      answers={QUESTIONS[activeQuestionIndex].answers}
-                      answerState={answerState}
-                      selectedAnswer={userAnswers[userAnswers.length - 1]}
+                      index={activeQuestionIndex}
                       onSelectAnswer={handleSelectAnswer}
                       onSkipAnswer={handleSkipAnswer}
             />
